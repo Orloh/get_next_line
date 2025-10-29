@@ -40,3 +40,18 @@ void	*ft_calloc(size_t count, size_t size)
 	ft_bzero(ptr, total);
 	return (ptr);
 }
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	i;
+
+	s_len = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	if (!s1 
+}
