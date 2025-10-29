@@ -1,29 +1,42 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/27 18:41:41 by orhernan          #+#    #+#             */
-/*   Updated: 2025/10/29 11:55:01 by orhernan         ###   ########.fr       */
+/*   Created: 2025/10/29 11:05:07 by orhernan          #+#    #+#             */
+/*   Updated: 2025/10/29 11:51:52 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+void	ft_bzero(void *ptr, size_t n)
 {
-	char	*buffer;
-	size_t	bytes_read;
-	size_t	buffer_size;
+	unsigned char	*p;
 
-	buffer_size = 4;
-	buffer = ft_calloc(buffer_size + 1, sizeof(char));
-	if (!buffer)
+	p = (unsigned char *)ptr;
+	while (n > 0)
+	{
+		*p++ = '\0';
+		n--;
+	}
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*ptr;
+	int		total;
+
+	if (size == 0 || count == 0)
+		return (malloc(0));
+	if (count > 0 && size > SIZE_MAX / count)
 		return (NULL);
-	bytes_read = read(fd, buffer, buffer_size);
-	if (bytes_read <= 0)
+	total = count * size;
+	ptr = malloc(total);
+	if (!ptr)
 		return (NULL);
-	return (buffer);
+	ft_bzero(ptr, total);
+	return (ptr);
 }

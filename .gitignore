@@ -5,4 +5,5 @@
 *.exe
 build/
 unity/
+test.txt
 main.c
