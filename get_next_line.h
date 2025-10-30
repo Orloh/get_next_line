@@ -21,9 +21,12 @@
 # include <stdlib.h>
 # include <fcntl.h>
 # include <stdint.h>
+# include <stdio.h>
 
 char	*get_next_line(int fd);
-void	ft_bzero(void *ptr, size_t n);
 void	*ft_calloc(size_t count, size_t size);
+size_t	ft_strlen(const char *s);
+char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strdup(const char *s);
 
 #endif

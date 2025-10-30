@@ -13,9 +13,9 @@
 #include "get_next_line.h"
 #include <stdio.h>
 
-int	main(int argc, char **argv):
+int	main(int argc, char **argv)
 {
-	int	fd;
+	int		fd;
 	char	*line;
 
 	if (argc != 2)
@@ -33,7 +33,7 @@ int	main(int argc, char **argv):
 	{
 		line = get_next_line(fd);
 		if (!line)
-			break;
+			break ;
 		printf("%s\n", line);
 		free(line);
 		line = NULL;

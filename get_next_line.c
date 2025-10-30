@@ -1,4 +1,5 @@
-/* ************************************************************************** */ /*                                                                            */
+/* ************************************************************************** */
+/*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
@@ -11,12 +12,13 @@
 
 #include "get_next_line.h"
 
-char	*get_next_line(int fd)
+char	*read_from_file(int fd)
 {
 	char	*buffer;
-	static char 	*store;
 	size_t	bytes_read;
+	int		count;
 
+	count = 0;
 	printf("ft_calloc[%d]--->", count++);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
@@ -27,16 +29,29 @@ char	*get_next_line(int fd)
 		free (buffer);
 		return (NULL);
 	}
+	return (buffer);
+}
+
+char	*get_next_line(int fd)
+{
+	char		*buffer;
+	char		*aux;
+	static char	*store;
+	int			flag;
+
+	flag = 1;
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	if (!store)
 	{
 		store = ft_calloc(1, sizeof(char));
 		if (!store)
 			return (NULL);
 	}
-	while (/*if buffer does not have the new line char*/)
-	{
-		/*append buffer to store*/
-		store = ft_strjoin(store, buffer);
-	}
-	return (buffer);
+	buffer = read_from_file(fd);
+	if (!buffer)
+		return (NULL);
+	aux = store;
+	store = ft_strjoin(store, buffer);
+	return (store);
 }
