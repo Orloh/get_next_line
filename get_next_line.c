@@ -16,7 +16,7 @@ char	*read_from_file(int fd)
 {
 	char	*buffer;
 	size_t	bytes_read;
-	int		count;
+	static	int		count;
 
 	count = 0;
 	printf("ft_calloc[%d]--->", count++);

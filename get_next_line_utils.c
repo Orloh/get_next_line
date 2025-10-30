@@ -64,10 +64,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	i = 0;
 	if (!str)
 		return (NULL);
-	while (s1[++i])
-		str[i] = s1[i];
-	while (s2[++i])
-		str[i] = s2[i];
+	while (*s1)
+		str[i++] = *s1++;
+	while (*s2)
+		str[i++] = *s2++;
 	return (original);
 }
 
