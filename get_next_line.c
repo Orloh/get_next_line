@@ -12,34 +12,31 @@
 
 #include "get_next_line.h"
 
-char	*read_from_file(int fd)
+static char	*read_from_file(int fd)
 {
 	char	*buffer;
 	size_t	bytes_read;
-	int		count;
+	static int		count;
 
-	count = 0;
+	if (!count)
+		count = 0;
 	printf("ft_calloc[%d]--->", count++);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
 		return (NULL);
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
 	if (bytes_read <= 0)
-	{
-		free (buffer);
-		return (NULL);
-	}
+		return (free (buffer), NULL);
 	return (buffer);
 }
 
 char	*get_next_line(int fd)
 {
+	static char	*store;
 	char		*buffer;
 	char		*aux;
-	static char	*store;
-	int			flag;
+	char		*rest;
 
-	flag = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!store)
@@ -48,10 +45,31 @@ char	*get_next_line(int fd)
 		if (!store)
 			return (NULL);
 	}
-	buffer = read_from_file(fd);
-	if (!buffer)
-		return (NULL);
-	aux = store;
-	store = ft_strjoin(store, buffer);
-	return (store);
+	while (1)
+	{
+		buffer = read_from_file(fd);
+		if (!buffer && !store)
+			return (NULL);
+		aux = store;
+		store = ft_strjoin(store, buffer);
+		if (!store)
+			return (free(buffer), NULL);
+		free(aux);
+		aux = NULL;
+		rest = ft_strchr(store,'\n');
+		if (rest)
+		{
+			*rest = '\0';
+			aux = store;
+			store = ft_strdup(rest + 1);
+			return(aux);
+		}
+		if (!rest && store)
+		{
+			aux = store;
+			store = NULL;
+			return(aux);
+		}
+	}
+	return (free(aux), store);
 }
