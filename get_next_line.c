@@ -15,7 +15,7 @@
 static char	*read_from_file(int fd)
 {
 	char	*buffer;
-	size_t	bytes_read;
+	ssize_t	bytes_read;
 	static int		count;
 
 	if (!count)
@@ -34,8 +34,7 @@ char	*get_next_line(int fd)
 {
 	static char	*store;
 	char		*buffer;
-	char		*aux;
-	char		*rest;
+	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -47,29 +46,29 @@ char	*get_next_line(int fd)
 	}
 	while (1)
 	{
+		line = ft_strchr(store,'\n');
+		if (line)
+		{
+			*line = '\0';
+			buffer = store;
+			store = ft_strdup(line + 1);
+			return(buffer);
+		}
 		buffer = read_from_file(fd);
-		if (!buffer && !store)
-			return (NULL);
-		aux = store;
-		store = ft_strjoin(store, buffer);
-		if (!store)
-			return (free(buffer), NULL);
-		free(aux);
-		aux = NULL;
-		rest = ft_strchr(store,'\n');
-		if (rest)
+		if (!buffer)
 		{
-			*rest = '\0';
-			aux = store;
-			store = ft_strdup(rest + 1);
-			return(aux);
-		}
-		if (!rest && store)
-		{
-			aux = store;
+			line = store;
 			store = NULL;
-			return(aux);
+			if (line && *line)
+				return (line);
+			free (line);
+			return (NULL);
 		}
+		line = ft_strjoin(store, buffer);
+		free (buffer);
+		free (store);
+		store = line;
+		if (!store)
+			return (NULL);
 	}
-	return (free(aux), store);
 }
