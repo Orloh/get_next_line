@@ -6,21 +6,17 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:41:41 by orhernan          #+#    #+#             */
-/*   Updated: 2025/10/29 11:55:01 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:32:46 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char	*read_from_file(int fd)
+char	*read_from_file(int fd)
 {
 	char	*buffer;
 	ssize_t	bytes_read;
-	static int		count;
 
-	if (!count)
-		count = 0;
-	printf("ft_calloc[%d]--->", count++);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
 		return (NULL);
@@ -28,6 +24,16 @@ static char	*read_from_file(int fd)
 	if (bytes_read <= 0)
 		return (free (buffer), NULL);
 	return (buffer);
+}
+
+char	*read_next_line(int fd)
+{
+	char	*buffer;
+
+	buffer = read_from_file(fd);
+	if (!buffer)
+		return (NULL);
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
