@@ -10,11 +10,11 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME        = test_read_from_file
-BUFFER_SIZE = 5
+NAME        = test_extract_new_line
+BUFFER_SIZE = 7
 CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -D BUFFER_SIZE=$(BUFFER_SIZE)
-SRC         = test_read_next_line.c	../get_next_line.c	\
+CFLAGS      = -Wall -Wextra -Werror -g3 -O0 -D BUFFER_SIZE=$(BUFFER_SIZE)
+SRC         = $(NAME).c	../get_next_line.c	\
 	      ../get_next_line_utils.c	unity/src/unity.c
 INC         = -I.. -Iunity/src
 

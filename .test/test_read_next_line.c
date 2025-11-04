@@ -6,7 +6,7 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 23:11:53 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/03 23:32:41 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/04 14:09:30 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 void	setUp(void) {}
 void	tearDown(void) {}
@@ -35,6 +36,7 @@ static int	create_temp_file(const char *content)
 	return fd;
 }
 
+// Read from empty file
 void	test_read_empty_file(void)
 {
 	int	fd = create_temp_file("");
@@ -46,11 +48,88 @@ void	test_read_empty_file(void)
 	close(fd);
 }
 
-void	test_
+// Read one line
+void	test_read_single_line(void)
+{
+	int	fd = create_temp_file("Hello World\n");
+	TEST_ASSERT_NOT_EQUAL(-1, fd);
+
+	char	*result = read_next_line(fd);
+	printf("result: %s\n", result);
+	TEST_ASSERT_EQUAL_STRING("Hello World\n", result);
+
+	free(result);
+	close(fd);
+}
+
+// Read long line
+void test_read_long_line(void)
+{
+	const char	*chunk = "ABCDE";
+	const size_t	chunks_per_read = (BUFFER_SIZE / 5) + 1;
+	const size_t	total_chunks = chunks_per_read + 1;
+	const size_t	line_len = total_chunks * 5;
+
+	char	*expected_line = ft_calloc(line_len + 2, 1);
+	TEST_ASSERT_NOT_NULL(expected_line);
+
+	for (size_t i = 0; i < total_chunks; ++i)
+		memcpy(expected_line + i*5, chunk, 5);
+	expected_line[line_len] = '\n';
+	expected_line[line_len + 1] = '\0';
+
+	int	fd = create_temp_file(expected_line);
+	TEST_ASSERT_NOT_EQUAL(-1, fd);
+
+	char	*result = read_next_line(fd);
+	TEST_ASSERT_NOT_NULL(result);
+	TEST_ASSERT_EQUAL_STRING(expected_line, result);
+
+	free(expected_line);
+	free(result);
+	close(fd);
+}
+
+void	test_read_multiple_lines(void)
+{
+	const char	*file_content = "Line1\nLine2\nLine3";
+	const size_t	file_len = ft_strlen(file_content);
+	
+	int	fd = create_temp_file(file_content);
+	TEST_ASSERT_NOT_EQUAL(-1, fd);
+
+	size_t	file_offset = 0;
+
+	while (file_offset < file_len)
+	{
+		char	*result = read_next_line(fd);
+		TEST_ASSERT_NOT_NULL(result);
+		
+		size_t remaining = file_len - file_offset;
+		size_t expected_len = (remaining < BUFFER_SIZE) ? remaining : BUFFER_SIZE;
+
+		const char	*expected_line = ft_substr(file_content, file_offset, expected_len);
+
+		TEST_ASSERT_EQUAL_STRING(expected_line, result);
+		TEST_ASSERT_EQUAL_CHAR('\0', result[expected_len]);
+		TEST_ASSERT_EQUAL_INT(expected_len, ft_strlen(result));
+		free (result);
+		file_offset += expected_len;
+	}
+
+	char	*eof_result = read_next_line(fd);
+	TEST_ASSERT_NULL(eof_result);
+	close (fd);
+}
+
+
 
 int	main(void)
 {
 	UNITY_BEGIN();
 	RUN_TEST(test_read_empty_file);
+	RUN_TEST(test_read_single_line);
+	RUN_TEST(test_read_long_line);
+	RUN_TEST(test_read_multiple_lines);
 	return UNITY_END();
 }
