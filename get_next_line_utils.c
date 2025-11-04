@@ -6,7 +6,7 @@
 /*   By: orhernan <orhernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/29 11:05:07 by orhernan          #+#    #+#             */
-/*   Updated: 2025/10/30 14:53:23 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:47:36 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	*ft_strjoin(char *s1, char *s2)
 char	*ft_strdup(const char *s)
 {
 	char	*dup;
-	size_t		len;
+	size_t	len;
 
 	len = ft_strlen(s);
 	dup = ft_calloc(len + 1, sizeof(char));
@@ -78,31 +78,6 @@ char	*ft_strdup(const char *s)
 	while (len--)
 		dup[len] = s[len];
 	return (dup);
-}
-
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	char		*substring;
-	size_t		str_len;
-	size_t		i;
-
-	if (!s)
-		return (NULL);
-	str_len = ft_strlen(s);
-	if (start >= str_len)
-		return (ft_strdup(""));
-	if (str_len - start < len)
-		len = str_len - start;
-	substring = ft_calloc(len + 1, sizeof(char));
-	if (!substring)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		substring[i] = s[start + i];
-		i++;
-	}
-	return (substring);
 }
 
 char	*ft_strchr(const char *s, int c)

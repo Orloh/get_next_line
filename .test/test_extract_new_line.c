@@ -33,9 +33,28 @@ void	test_extract_nl(void)
 	free (result);
 }
 
+void	test_extract_empty_buffer(void)
+{
+	char	*buffer = "";
+	char	*result = extract_new_line(buffer);
+
+	TEST_ASSERT_NULL(result);
+}
+
+void	test_extract_end_of_line(void)
+{
+	char	*buffer = "Line3";
+	char	*result = extract_new_line(buffer);
+
+	TEST_ASSERT_NOT_NULL(result);
+	TEST_ASSERT_EQUAL_STRING("Line3", result);
+}
+
 int	main(void)
 {
 	UNITY_BEGIN();
 	RUN_TEST(test_extract_nl);
+	RUN_TEST(test_extract_empty_buffer);
+	RUN_TEST(test_extract_end_of_line);
 	return UNITY_END();
 }

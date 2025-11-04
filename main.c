@@ -34,7 +34,7 @@ int	main(int argc, char **argv)
 		line = get_next_line(fd);
 		if (!line)
 			break ;
-		printf("%s\n", line);
+		printf("get_next_line()-->%s", line);
 		free(line);
 		line = NULL;
 	}
