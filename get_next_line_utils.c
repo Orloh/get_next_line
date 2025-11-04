@@ -14,24 +14,21 @@
 
 void	*ft_calloc(size_t count, size_t size)
 {
-	void			*ptr;
-	unsigned char	*p;
-	int				total;
+	void		*ptr;
+	size_t		total;
+	char		*p;
 
 	if (size == 0 || count == 0)
 		return (malloc(0));
-	if (count > 0 && size > SIZE_MAX / count)
-		return (NULL);
 	total = count * size;
+	if (total / count != size)
+		return (NULL);
 	ptr = malloc(total);
 	if (!ptr)
 		return (NULL);
-	p = (unsigned char *)ptr;
-	while (total > 0)
-	{
-		*p++ = '\0';
-		total--;
-	}
+	p = (char *)ptr;
+	while (total--)
+		p[total] = '\0';
 	return (ptr);
 }
 
@@ -47,10 +44,9 @@ size_t	ft_strlen(const char *s)
 
 char	*ft_strjoin(char *s1, char *s2)
 {
-	char	*original;
 	char	*str;
 	size_t	str_len;
-	int		i;
+	char	*original;
 
 	if (!s1 && !s2)
 		return (ft_strdup(""));
@@ -59,36 +55,29 @@ char	*ft_strjoin(char *s1, char *s2)
 	if (!s2)
 		s2 = "";
 	str_len = ft_strlen(s1) + ft_strlen(s2);
-	str = ft_calloc(str_len + 1, sizeof(char));
-	original = str;
-	i = 0;
-	if (!str)
+	original = ft_calloc(str_len + 1, sizeof(char));
+	if (!original)
 		return (NULL);
+	str = original;
 	while (*s1)
-		str[i++] = *s1++;
+		*str++ = *s1++;
 	while (*s2)
-		str[i++] = *s2++;
+		*str++ = *s2++;
 	return (original);
 }
 
 char	*ft_strdup(const char *s)
 {
-	char	*tmp;
-	char	*tmp_aux;
-	int		count;
+	char	*dup;
+	size_t		len;
 
-	count = ft_strlen(s);
-	tmp = (char *)ft_calloc(count + 1, sizeof(char));
-	if (!tmp)
+	len = ft_strlen(s);
+	dup = ft_calloc(len + 1, sizeof(char));
+	if (!dup)
 		return (NULL);
-	tmp_aux = tmp;
-	while (*s)
-	{
-		*tmp = *s;
-		s++;
-		tmp++;
-	}
-	return (tmp_aux);
+	while (len--)
+		dup[len] = s[len];
+	return (dup);
 }
 
 char	*ft_substr(const char *s, unsigned int start, size_t len)
@@ -114,4 +103,16 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		i++;
 	}
 	return (substring);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	unsigned char	uc;
+
+	uc = (unsigned char)c;
+	while (*s && *s != uc)
+		s++;
+	if (*s == uc)
+		return ((char *)s);
+	return (NULL);
 }

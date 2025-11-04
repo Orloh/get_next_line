@@ -6,7 +6,7 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:41:41 by orhernan          #+#    #+#             */
-/*   Updated: 2025/10/29 11:55:01 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:32:46 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,32 @@ char	*read_from_file(int fd)
 {
 	char	*buffer;
 	size_t	bytes_read;
-	static	int		count;
 
-	count = 0;
-	printf("ft_calloc[%d]--->", count++);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
 		return (NULL);
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
 	if (bytes_read <= 0)
-	{
-		free (buffer);
-		return (NULL);
-	}
+		return (free (buffer), NULL);
 	return (buffer);
+}
+
+char	*read_next_line(int fd)
+{
+	char	*buffer;
+
+	buffer = read_from_file(fd);
+	if (!buffer)
+		return (NULL);
+	return (NULL);
 }
 
 char	*get_next_line(int fd)
 {
-	char		*buffer;
-	char		*aux;
 	static char	*store;
-	int			flag;
+	char		*buffer;
+	char		*line;
 
-	flag = 1;
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	if (!store)
@@ -48,10 +50,31 @@ char	*get_next_line(int fd)
 		if (!store)
 			return (NULL);
 	}
-	buffer = read_from_file(fd);
-	if (!buffer)
-		return (NULL);
-	aux = store;
-	store = ft_strjoin(store, buffer);
-	return (store);
+	while (1)
+	{
+		line = ft_strchr(store,'\n');
+		if (line)
+		{
+			*line = '\0';
+			buffer = store;
+			store = ft_strdup(line + 1);
+			return(buffer);
+		}
+		buffer = read_from_file(fd);
+		if (!buffer)
+		{
+			line = store;
+			store = NULL;
+			if (line && *line)
+				return (line);
+			free (line);
+			return (NULL);
+		}
+		line = ft_strjoin(store, buffer);
+		free (buffer);
+		free (store);
+		store = line;
+		if (!store)
+			return (NULL);
+	}
 }

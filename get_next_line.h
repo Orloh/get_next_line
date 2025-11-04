@@ -6,7 +6,7 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:44:49 by orhernan          #+#    #+#             */
-/*   Updated: 2025/10/29 11:52:22 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/03 23:26:20 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ char	*get_next_line(int fd);
 void	*ft_calloc(size_t count, size_t size);
 size_t	ft_strlen(const char *s);
 char	*ft_strjoin(char *s1, char *s2);
+char	*ft_strchr(const char *s, int c);
 char	*ft_strdup(const char *s);
+char	*read_from_file(int fd);
+char	*read_next_line(int fd);
 
 #endif
