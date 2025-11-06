@@ -6,7 +6,7 @@
 /*   By: orhernan <orhernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:41:41 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/04 15:48:06 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/06 01:09:43 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 char	*read_from_file(int fd)
 {
 	char	*buffer;
-	size_t	bytes_read;
+	ssize_t	bytes_read;
 
+	if (fd < 0)
+		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
 		return (NULL);
@@ -119,6 +121,9 @@ char	*get_next_line(int fd)
 	if (!line)
 		return (free(store), store = NULL, NULL);
 	temp = store;
-	store = ft_strdup(ft_strchr(store, '\n') + 1);
+	if (ft_strchr(store, '\n'))
+		store = ft_strdup(ft_strchr(store, '\n') + 1);
+	else
+		store = NULL;
 	return (free(temp), line);
 }

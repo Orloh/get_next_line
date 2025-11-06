@@ -10,21 +10,68 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME        = test_extract_new_line
-BUFFER_SIZE = 7
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror -g3 -O0 -D BUFFER_SIZE=$(BUFFER_SIZE)
-SRC         = $(NAME).c	../get_next_line.c	\
-	      ../get_next_line_utils.c	unity/src/unity.c
-INC         = -I.. -Iunity/src
+NAME_BASE	= test_
+BUFFER_SIZE	= 7
+CC		= cc
+CFLAGS		= -Wall -Wextra -Werror -g3 -O0 -D BUFFER_SIZE=$(BUFFER_SIZE)
 
-$(NAME): $(SRC)
-	$(CC) $(CFLAGS) $(SRC) $(INC) -o $@
+# Paths relative to .test
+SRC_DIR		= .
+ROOT		= ..
+UNITY_DIR	= $(SRC_DIR)/unity
+INC		= -I$(ROOT) -I$(UNITY_DIR)/src
 
-run: $(NAME)
-	./$(NAME)
+# All test files that start with test_
+TEST_SRCS	= $(wildcard $(SRC_DIR)/test_*.c)
+
+# Library sources
+GNL_SRCS	= $(ROOT)/get_next_line.c $(ROOT)/get_next_line_utils.c
+
+# Derived names
+TEST_BINS	=$(patsubst $(SRC_DIR)/%.c,%,$(TEST_SRCS))
+
+# Default test
+DEFAULT_TEST = $(firstword $(TEST_BINS))
+
+# Phony targets
+.PHONY: all run clean fclean re $(TEST_BINS) help
+
+# Pattern rule: test_foo -> test_foo (binary)
+$(TEST_BINS): %: $(SRC_DIR)/%.c
+	@echo "=== Building $@ ==="
+	$(CC) $(CFLAGS) $(INC) $(GNL_SRCS) $(UNITY_DIR)/src/unity.c $^ -o $@
+	@echo "=== Running $@ ==="
+	./$@
+
+# Build all tests
+all: $(TEST_BINS)
+
+# Run default test
+run: $(DEFAULT_TEST)
+	@echo "=== Running $(DEFAULT_TEST) ==="
+	./$(DEFAULT_TEST)
 
 clean:
-	rm -f $(NAME) /tmp/testfile.*
+	@echo "Removing test binaries..."
+	rm -f $(TEST_BINS)
 
-.PHONY: run clean
+fclean: clean
+	@echo "Removing temporary files..."
+	rm -f /tmp/testfile.*
+
+re: fclean all
+
+# Help
+
+# ---------- Help ------------------------------------------------------------ #
+help:
+	@echo "Available targets:"
+	@echo "  make                → build & run the first test ($(DEFAULT_TEST))"
+	@echo "  make all            → build every test"
+	@echo "  make <test_name>    → build & run a specific test (e.g. make test_read_from_file)"
+	@echo "  make run            → run the default test"
+	@echo "  make clean/fclean   → remove binaries / temp files"
+	@echo ""
+	@echo "Current test files:"
+	@ls -1 $(SRC_DIR)/test_*.c 2>/dev/null | sed 's|.*/|  - |' || echo "  (none)"
+

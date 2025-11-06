@@ -6,7 +6,7 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 23:11:53 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/04 14:09:30 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/06 00:41:19 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ void	test_read_single_line(void)
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
 
 	char	*result = read_next_line(fd);
-	printf("result: %s\n", result);
 	TEST_ASSERT_EQUAL_STRING("Hello World\n", result);
 
 	free(result);
@@ -121,8 +120,6 @@ void	test_read_multiple_lines(void)
 	TEST_ASSERT_NULL(eof_result);
 	close (fd);
 }
-
-
 
 int	main(void)
 {
