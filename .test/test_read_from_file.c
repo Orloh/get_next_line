@@ -6,7 +6,7 @@
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/03 19:03:22 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/03 23:02:44 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/06 01:15:55 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 void	setUp(void) {}
 void	tearDown(void) {}
@@ -76,19 +77,29 @@ void	test_read_empty_file(void)
 {
 	int	fd = create_temp_file("");
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
-
+	
 	char	*result = read_from_file(fd);
 	TEST_ASSERT_NULL(result);
 
 	close(fd);
 }
 
-// read() error
-void	test_read_error(void)
+// Invalid fd
+void	test_read_invalid_fd(void)
 {
 	char	*result = read_from_file(-1);
 	TEST_ASSERT_NULL(result);
 }
+
+// Read error
+void	test_read_error(void)
+{
+    int		fd = create_temp_file("error");
+    close(fd);
+    char	*line = get_next_line(fd);
+    TEST_ASSERT_NULL(line);
+}
+
 
 // Multiple reads from same file
 void	test_multiple_reads(void)
@@ -106,8 +117,8 @@ void	test_multiple_reads(void)
 	int	fd = create_temp_file(file_content);
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
 	
-	size_t offset = 0;
-	sisize_tt read_count = 0;
+	size_t	offset = 0;
+	size_t	read_count = 0;
 
 	while (1)
 	{
@@ -147,6 +158,7 @@ int main(void)
 	RUN_TEST(test_read_normal);
 	RUN_TEST(test_read_full_buffer);
 	RUN_TEST(test_read_empty_file);
+	RUN_TEST(test_read_invalid_fd);
 	RUN_TEST(test_read_error);
 	RUN_TEST(test_multiple_reads);
 	return UNITY_END();
