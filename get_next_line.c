@@ -6,124 +6,80 @@
 /*   By: orhernan <orhernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/27 18:41:41 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/06 01:15:58 by orhernan         ###   ########.fr       */
+/*   Updated: 2025/11/06 12:59:59 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	char		*substring;
-	size_t		str_len;
-	size_t		i;
-
-	if (!s)
-		return (NULL);
-	str_len = ft_strlen(s);
-	if (start >= str_len)
-		return (ft_strdup(""));
-	if (str_len - start < len)
-		len = str_len - start;
-	substring = ft_calloc(len + 1, sizeof(char));
-	if (!substring)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		substring[i] = s[start + i];
-		i++;
-	}
-	return (substring);
-}
-
-char	*read_from_file(int fd)
-{
-	char	*buffer;
-	ssize_t	bytes_read;
-
-	if (fd < 0)
-		return (NULL);
-	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
-	if (!buffer)
-		return (NULL);
-	bytes_read = read(fd, buffer, BUFFER_SIZE);
-	if (bytes_read <= 0)
-		return (free (buffer), NULL);
-	return (buffer);
-}
-
-char	*read_next_line(int fd)
-{
-	char	*buffer;
-	char	*line;
-	char	*temp;
-
-	line = ft_strdup("");
-	if (!line)
-		return (NULL);
-	while (!ft_strchr(line, '\n'))
-	{
-		buffer = read_from_file(fd);
-		if (!buffer)
-		{
-			if (*line)
-				return (line);
-			else
-				return (free(line), NULL);
-		}
-		temp = line;
-		line = ft_strjoin(line, buffer);
-		free(temp);
-		free(buffer);
-		if (!line)
-			return (NULL);
-	}
-	return (line);
-}
-
-char	*extract_new_line(const char *buffer)
-{
-	size_t	len;
-	char	*new_line;
-
-	len = 0;
-	while (buffer[len] && buffer[len] != '\n')
-		len++;
-	new_line = ft_substr(buffer, 0, len + 1);
-	if (!new_line || !*new_line)
-		return (NULL);
-	return (new_line);
-}
-
 char	*get_next_line(int fd)
 {
 	static char	*store;
-	char		*buffer;
 	char		*line;
-	char		*temp;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!store)
-		store = ft_calloc(1, sizeof(char));
+	store = ft_read_from_file(fd, store);
 	if (!store)
 		return (NULL);
-	buffer = read_next_line(fd);
-	if (!buffer && !*store)
-		return (free(store), store = NULL, NULL);
-	temp = store;
-	store = ft_strjoin(store, buffer);
-	free(temp);
-	if (buffer)
-		free(buffer);
-	line = extract_new_line(store);
-	if (!line)
-		return (free(store), store = NULL, NULL);
-	temp = store;
-	if (ft_strchr(store, '\n'))
-		store = ft_strdup(ft_strchr(store, '\n') + 1);
-	else
-		store = NULL;
-	return (free(temp), line);
+	line = ft_get_line(store);
+	store = ft_get_rest(store);
+	return (line);
+}
+
+char	*ft_read_from_file(int fd, char *store)
+{
+	char	*buffer;
+	char	*temp;
+	ssize_t	bytes_read;
+
+	if (!store)
+		store = ft_strdup("");
+	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
+	if (!buffer)
+		return (NULL);
+	bytes_read = 1;
+	while (bytes_read > 0 && !ft_strchr(buffer, '\n'))
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return (free (buffer), NULL);
+		buffer[bytes_read] = 0;
+		temp = store;
+		store = ft_strjoin(store, buffer);
+		free(temp);
+	}
+	return (store);
+}
+
+char	*ft_get_line(char *store)
+{
+	size_t	l_len;
+	char	*line;
+
+	l_len = 0;
+	if (!store[0])
+		return (NULL);
+	while (store[l_len] && store[l_len] != '\n')
+		l_len++;
+	line = ft_substr(store, 0, l_len + 1);
+	if (!line || !*line)
+		return (NULL);
+	return (line);
+}
+
+char	*ft_get_rest(char *store)
+{
+	size_t	l_len;
+	char	*rest;
+
+	l_len = 0;
+	while (store[l_len] && store[l_len] != '\n')
+		l_len++;
+	if (!store[l_len])
+		return (free(store), NULL);
+	rest = ft_substr(store, l_len + 1, ft_strlen(store));
+	if (!rest || !*rest)
+		return (NULL);
+	return (free(store), rest);
 }

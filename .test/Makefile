@@ -6,7 +6,7 @@
 #    By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/11/03 20:20:41 by orhernan          #+#    #+#              #
-#    Updated: 2025/11/03 23:25:15 by orhernan         ###   ########.fr        #
+#    Updated: 2025/11/06 12:32:22 by orhernan         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,8 @@ GNL_SRCS	= $(ROOT)/get_next_line.c $(ROOT)/get_next_line_utils.c
 TEST_BINS	=$(patsubst $(SRC_DIR)/%.c,%,$(TEST_SRCS))
 
 # Default test
-DEFAULT_TEST = $(firstword $(TEST_BINS))
+DEFAULT_TEST = test_ft_read_from_file
+DEFAULT_SRC = $(DEFAULT_TEST).c
 
 # Phony targets
 .PHONY: all run clean fclean re $(TEST_BINS) help
@@ -47,7 +48,9 @@ $(TEST_BINS): %: $(SRC_DIR)/%.c
 all: $(TEST_BINS)
 
 # Run default test
-run: $(DEFAULT_TEST)
+run:
+	@echo "=== Building $(DEFAULT_TEST) ==="
+	$(CC) $(CFLAGS) $(INC) $(GNL_SRCS) $(UNITY_DIR)/src/unity.c $(DEFAULT_SRC) -o $(DEFAULT_TEST)
 	@echo "=== Running $(DEFAULT_TEST) ==="
 	./$(DEFAULT_TEST)
 

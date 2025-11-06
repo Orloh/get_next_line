@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_read_next_line.c                              :+:      :+:    :+:   */
+/*   test_ft_read_from_file.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -42,8 +42,10 @@ void	test_read_empty_file(void)
 	int	fd = create_temp_file("");
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
 
-	char	*result = read_next_line(fd);
-	TEST_ASSERT_NULL(result);
+	char	*result = NULL;
+	result = ft_read_from_file(fd, result);
+	TEST_ASSERT_NOT_NULL(result);
+	TEST_ASSERT_EQUAL_STRING("", result);
 
 	close(fd);
 }
@@ -54,7 +56,9 @@ void	test_read_single_line(void)
 	int	fd = create_temp_file("Hello World\n");
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
 
-	char	*result = read_next_line(fd);
+	char	*result = NULL ;
+	result = ft_read_from_file(fd, result);
+	TEST_ASSERT_NOT_NULL(result);
 	TEST_ASSERT_EQUAL_STRING("Hello World\n", result);
 
 	free(result);
@@ -80,7 +84,8 @@ void test_read_long_line(void)
 	int	fd = create_temp_file(expected_line);
 	TEST_ASSERT_NOT_EQUAL(-1, fd);
 
-	char	*result = read_next_line(fd);
+	char	*result = NULL ;
+	result = ft_read_from_file(fd, result);
 	TEST_ASSERT_NOT_NULL(result);
 	TEST_ASSERT_EQUAL_STRING(expected_line, result);
 
@@ -101,7 +106,8 @@ void	test_read_multiple_lines(void)
 
 	while (file_offset < file_len)
 	{
-		char	*result = read_next_line(fd);
+		char	*result = NULL;
+		result = ft_read_from_file(fd, result);
 		TEST_ASSERT_NOT_NULL(result);
 		
 		size_t remaining = file_len - file_offset;
@@ -116,8 +122,10 @@ void	test_read_multiple_lines(void)
 		file_offset += expected_len;
 	}
 
-	char	*eof_result = read_next_line(fd);
-	TEST_ASSERT_NULL(eof_result);
+	char	*eof_result = NULL;
+	eof_result = ft_read_from_file(fd, eof_result);
+	TEST_ASSERT_NOT_NULL(eof_result);
+	TEST_ASSERT_EQUAL_STRING("", eof_result);
 	close (fd);
 }
 
