@@ -47,6 +47,22 @@ void	test_read_empty_file(void)
 	close(fd);
 }
 
+void	test_read_only_nl(void)
+{
+	int	fd = create_temp_file("\n");
+	TEST_ASSERT_NOT_EQUAL(-1, fd);
+	
+	char	*line = get_next_line(fd);
+	TEST_ASSERT_NOT_NULL(line);
+	TEST_ASSERT_EQUAL_STRING("\n", line);
+	free(line);
+
+	line = get_next_line(fd);
+	TEST_ASSERT_NULL(line);
+
+	close(fd);
+}
+
 void	test_read_line_with_no_nl(void)
 {
 	int	fd = create_temp_file("Hello World!");
@@ -96,9 +112,10 @@ int	main(void)
 {
 	UNITY_BEGIN();
 	RUN_TEST(test_read_empty_file);
+	RUN_TEST(test_read_only_nl);
 	RUN_TEST(test_read_line_with_no_nl);
 	RUN_TEST(test_read_line_with_nl);
 	RUN_TEST(test_invalid_fd);
-	//RUN_TEST(test_read_error);
+	RUN_TEST(test_read_error);
 	return UNITY_END();
 }

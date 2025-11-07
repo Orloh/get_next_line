@@ -91,28 +91,3 @@ char	*ft_strchr(const char *s, int c)
 		return ((char *)s);
 	return (NULL);
 }
-
-char	*ft_substr(const char *s, unsigned int start, size_t len)
-{
-	char		*substring;
-	size_t		str_len;
-	size_t		i;
-
-	if (!s)
-		return (NULL);
-	str_len = ft_strlen(s);
-	if (start >= str_len)
-		return (ft_strdup(""));
-	if (str_len - start < len)
-		len = str_len - start;
-	substring = ft_calloc(len + 1, sizeof(char));
-	if (!substring)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		substring[i] = s[start + i];
-		i++;
-	}
-	return (substring);
-}

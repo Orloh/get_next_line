@@ -34,52 +34,68 @@ char	*ft_read_from_file(int fd, char *store)
 	ssize_t	bytes_read;
 
 	if (!store)
-		store = ft_strdup("");
+		store = ft_calloc(1, 1);
+	if (!store)
+		return (NULL);
 	buffer = ft_calloc(BUFFER_SIZE + 1, sizeof(char));
 	if (!buffer)
-		return (NULL);
+		return (free(store), NULL);
 	bytes_read = 1;
 	while (bytes_read > 0 && !ft_strchr(buffer, '\n'))
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
-			return (free (buffer), NULL);
+		if (bytes_read == -1)
+			return (free (buffer), free(store), NULL);
 		buffer[bytes_read] = 0;
 		temp = store;
 		store = ft_strjoin(store, buffer);
 		free(temp);
+		if (!store)
+			return (free(buffer), NULL);
 	}
-	return (store);
+	return (free(buffer), store);
 }
 
 char	*ft_get_line(char *store)
 {
-	size_t	l_len;
+	size_t	i;
+	size_t	j;
 	char	*line;
 
-	l_len = 0;
-	if (!store[0])
+	i = 0;
+	if (!store || !store[0])
 		return (NULL);
-	while (store[l_len] && store[l_len] != '\n')
-		l_len++;
-	line = ft_substr(store, 0, l_len + 1);
-	if (!line || !*line)
+	while (store[i] && store[i] != '\n')
+		i++;
+	line = ft_calloc(i + (store[i] == '\n') + 1, sizeof(char));
+	if (!line)
 		return (NULL);
+	j = 0;
+	while (j < i)
+	{
+		line[j] = store[j];
+		j++;
+	}
+	if (store[i] == '\n')
+		line[j++] = '\n';
 	return (line);
 }
 
 char	*ft_get_rest(char *store)
 {
-	size_t	l_len;
+	size_t	i;
+	size_t	j;
 	char	*rest;
 
-	l_len = 0;
-	while (store[l_len] && store[l_len] != '\n')
-		l_len++;
-	if (!store[l_len])
+	i = 0;
+	while (store[i] && store[i] != '\n')
+		i++;
+	if (!store[i])
 		return (free(store), NULL);
-	rest = ft_substr(store, l_len + 1, ft_strlen(store));
-	if (!rest || !*rest)
-		return (NULL);
+	rest = ft_calloc((ft_strlen(store) - i) + 1, sizeof(char));
+	i++;
+	j = 0;
+	while (store[i])
+		rest[j++] = store[i++];
 	return (free(store), rest);
 }
