@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orhernan <orhernan@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -20,6 +20,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stddef.h>
+# include <limits.h>
 
 char	*get_next_line(int fd);
 void	*ft_calloc(size_t count, size_t size);
