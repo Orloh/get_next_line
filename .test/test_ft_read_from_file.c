@@ -36,6 +36,29 @@ static int	create_temp_file(const char *content)
 	return fd;
 }
 
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	char	*substring;
+	size_t	i;
+
+	if (!s)
+		return (NULL);
+	if (start >= strlen(s))
+		return (ft_calloc(1, 1));
+	if (len > ft_strlen(s + start))
+		len = ft_strlen(s + start);
+	substring = ft_calloc(len + 1, sizeof(char));
+	if (!substring)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		substring[i] = s[start + i];
+		i++;
+	}
+	return (substring);
+}
+
 // Read from empty file
 void	test_read_empty_file(void)
 {
@@ -114,7 +137,6 @@ void	test_read_multiple_lines(void)
 		size_t expected_len = (remaining < BUFFER_SIZE) ? remaining : BUFFER_SIZE;
 
 		const char	*expected_line = ft_substr(file_content, file_offset, expected_len);
-
 		TEST_ASSERT_EQUAL_STRING(expected_line, result);
 		TEST_ASSERT_EQUAL_CHAR('\0', result[expected_len]);
 		TEST_ASSERT_EQUAL_INT(expected_len, ft_strlen(result));

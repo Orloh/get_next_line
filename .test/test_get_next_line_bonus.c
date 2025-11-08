@@ -1,21 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   test_get_next_line.c                               :+:      :+:    :+:   */
+/*   test_get_next_line_bonus.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/05 23:51:42 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/06 01:01:45 by orhernan         ###   ########.fr       */
+/*   Created: 2025/11/08 17:39:03 by orhernan          #+#    #+#             */
+/*   Updated: 2025/11/08 17:44:54 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-#include "get_next_line.h"
 #include "unity.h"
-#include <stdlib.h>
+#include "get_next_line_bonus.h"
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
 
 void	setUp(void) {}
@@ -27,13 +26,16 @@ static int	create_temp_file(const char *content)
 	char	 template[] = "/tmp/testfile.XXXXXX";
 	int	fd = mkstemp(template);
 	
-	if (fd == -1) return (-1);
-	if (content)
-		write (fd, content, ft_strlen(content));
+	if (fd == -1) TEST_FAIL_MESSAGE("mkstemp failed");
+	if (!content && write (fd, content, ft_strlen(content)) == -1)
+	{
+		close (fd);
+		TEST_FAIL_MESSAGE("write failed");
+	}
 	lseek(fd, 0, SEEK_SET);
 	unlink(template);
 	return fd;
-}
+}v
 
 // Read from an empty file
 
