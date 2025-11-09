@@ -88,11 +88,15 @@ char	*ft_get_rest(char *store)
 	char	*rest;
 
 	i = 0;
+	if (!store || !store[i])
+		return (NULL);
 	while (store[i] && store[i] != '\n')
 		i++;
 	if (!store[i])
 		return (free(store), NULL);
 	rest = ft_calloc((ft_strlen(store) - i) + 1, sizeof(char));
+	if (!rest)
+		return (free(store), NULL);
 	i++;
 	j = 0;
 	while (store[i])
