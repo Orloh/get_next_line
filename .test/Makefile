@@ -21,42 +21,55 @@ ROOT		= ..
 UNITY_DIR	= $(SRC_DIR)/unity
 INC		= -I$(ROOT) -I$(UNITY_DIR)/src
 
-# All test files that start with test_
-TEST_SRCS	= $(wildcard $(SRC_DIR)/test_*.c)
+# All mandatory testfiles
+MANDATORY_SRCS	= $(filter-out %_bonus.c, $(wildcard $(SRC_DIR)/test_*.c))
+MANDATORY_BINS	=$(patsubst $(SRC_DIR)/%.c,%,$(MANDATORY_SRCS))
+
+# Bonus test files
+BONUS_SRCS	= $(wildcard $(SRC_DIR)/test_*_bonus.c)
+BONUS_BINS	= $(patsubst $(SRC_DIR)/%.c,%,$(BONUS_SRCS))
+
+# All binaries
+ALL_BINS 	= $(MANDATORY_BINS) $(BONUS_BINS)
 
 # Library sources
-GNL_SRCS	= $(ROOT)/get_next_line.c $(ROOT)/get_next_line_utils.c
-
-# Derived names
-TEST_BINS	=$(patsubst $(SRC_DIR)/%.c,%,$(TEST_SRCS))
+MANDATORY_GNL	= $(ROOT)/get_next_line.c $(ROOT)/get_next_line_utils.c
+BONUS_GNL	= $(ROOT)/get_next_line_bonus.c $(ROOT)/get_next_line_utils_bonus.c
 
 # Default test
-DEFAULT_TEST = test_ft_read_from_file
+DEFAULT_TEST = $(firstword $(MANDATORY_BINS))
 DEFAULT_SRC = $(DEFAULT_TEST).c
 
 # Phony targets
-.PHONY: all run clean fclean re $(TEST_BINS) help
-
-# Pattern rule: test_foo -> test_foo (binary)
-$(TEST_BINS): %: $(SRC_DIR)/%.c
-	@echo "=== Building $@ ==="
-	$(CC) $(CFLAGS) $(INC) $(GNL_SRCS) $(UNITY_DIR)/src/unity.c $^ -o $@
-	@echo "=== Running $@ ==="
-	./$@
+.PHONY: all run clean fclean re $(ALL_BINS) help bonus
 
 # Build all tests
-all: $(TEST_BINS)
+all: bonus mandatory
+
+$(MANDATORY_BINS): %: $(SRC_DIR)/%.c
+	@echo "=== Building mandatory test: $@ ==="
+	@echo "  [MANDATORY MODE]"
+	$(CC) $(CFLAGS) $(INC) $(MANDATORY_GNL) $(UNITY_DIR)/src/unity.c $< -o $@;
+	@echo "=== Running $@==="
+	./$@
+
+mandatory: $(MANDATORY_BINS)
+
+$(BONUS_BINS): %: $(SRC_DIR)/%.c
+	@echo "=== Building bonus test: $@ ==="
+	@echo "  [BONUS MODE]"
+	$(CC) $(CFLAGS) $(INC) $(BONUS_GNL) $(UNITY_DIR)/src/unity.c $< -o $@;
+	@echo "=== Running $@==="
+	./$@
+
+bonus: $(BONUS_BINS)
 
 # Run default test
-run:
-	@echo "=== Building $(DEFAULT_TEST) ==="
-	$(CC) $(CFLAGS) $(INC) $(GNL_SRCS) $(UNITY_DIR)/src/unity.c $(DEFAULT_SRC) -o $(DEFAULT_TEST)
-	@echo "=== Running $(DEFAULT_TEST) ==="
-	./$(DEFAULT_TEST)
+run: $(DEFAULT_TEST)
 
 clean:
 	@echo "Removing test binaries..."
-	rm -f $(TEST_BINS)
+	rm -f $(ALL_BINS)
 
 fclean: clean
 	@echo "Removing temporary files..."
@@ -70,11 +83,14 @@ re: fclean all
 help:
 	@echo "Available targets:"
 	@echo "  make                → build & run the first test ($(DEFAULT_TEST))"
-	@echo "  make all            → build every test"
-	@echo "  make <test_name>    → build & run a specific test (e.g. make test_read_from_file)"
+	@echo "  make all            → build & run mandatory + bonus"
+	@echo "  make mandatory      → build & run all mandatory tests"
+	@echo "  make bonus          → build & run all bonus tests"
 	@echo "  make run            → run the default test"
 	@echo "  make clean/fclean   → remove binaries / temp files"
 	@echo ""
-	@echo "Current test files:"
-	@ls -1 $(SRC_DIR)/test_*.c 2>/dev/null | sed 's|.*/|  - |' || echo "  (none)"
+	@echo "Mandatory test files:"
+	@printf "  - %s\n" $(MANDATORY_BINS) 2>/dev/null || echo "  (none)"
+	@echo "Mandatory test files:"
+	@printf "  - %s\n" $(BONUS_BINS) 2>/dev/null || echo "  (none)"
 

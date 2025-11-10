@@ -14,16 +14,16 @@
 
 char	*get_next_line(int fd)
 {
-	static char	*store[OPEN_MAX];
+	static char	*store[1024];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	store[fd] = ft_read_from_file(fd, store);
+	store[fd] = ft_read_from_file(fd, store[fd]);
 	if (!store[fd])
 		return (NULL);
 	line = ft_get_line(store[fd]);
-	store = ft_get_rest(store[fd]);
+	store[fd] = ft_get_rest(store[fd]);
 	return (line);
 }
 
@@ -65,7 +65,7 @@ char	*ft_get_line(char *store)
 	i = 0;
 	if (!store || !store[0])
 		return (NULL);
-	while (store[i] && store[i] != '\n')
+	while (store[i] && (store)[i] != '\n')
 		i++;
 	line = ft_calloc(i + (store[i] == '\n') + 1, sizeof(char));
 	if (!line)
