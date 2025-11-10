@@ -96,18 +96,44 @@ void	test_read_line_with_nl(void)
 
 void	test_invalid_fd(void)
 {
-    char	*line = get_next_line(-1);
-    TEST_ASSERT_NULL(line);
+	char	*line = get_next_line(-1);
+	TEST_ASSERT_NULL(line);
 }
 
 void	test_read_error(void)
 {
-    // Create a file, then close and try to read
-    int		fd = create_temp_file("error");
-    close(fd);
-    char	*line = get_next_line(fd);
-    TEST_ASSERT_NULL(line);
+	// Create a file, then close and try to read
+	int		fd = create_temp_file("error");
+	close(fd);
+
+	char	*line = get_next_line(fd);
+	TEST_ASSERT_NULL(line);
 }
+
+void	test_read_multiple_nl(void)
+{
+	int	fd = create_temp_file("\n\nHello\n\n");
+	TEST_ASSERT_NOT_EQUAL(-1, fd);
+	
+	char	*line = get_next_line(fd);
+	TEST_ASSERT_EQUAL_STRING("\n", line);
+	free(line);
+	line = get_next_line(fd);
+	TEST_ASSERT_EQUAL_STRING("\n", line);
+	free(line);
+	line = get_next_line(fd);
+	TEST_ASSERT_EQUAL_STRING("Hello\n", line);
+	free(line);
+	line = get_next_line(fd);
+	TEST_ASSERT_EQUAL_STRING("\n", line);
+	free(line);
+	line = get_next_line(fd);
+	TEST_ASSERT_NULL(line);
+
+	close(fd);
+}
+
+
 
 int	main(void)
 {
@@ -118,5 +144,6 @@ int	main(void)
 	RUN_TEST(test_read_line_with_nl);
 	RUN_TEST(test_invalid_fd);
 	RUN_TEST(test_read_error);
+	RUN_TEST(test_read_multiple_nl);
 	return UNITY_END();
 }

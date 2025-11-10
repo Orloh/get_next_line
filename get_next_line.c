@@ -88,7 +88,7 @@ char	*ft_get_rest(char *store)
 	char	*rest;
 
 	i = 0;
-	if (!store || !store[i])
+	if (!store)
 		return (NULL);
 	while (store[i] && store[i] != '\n')
 		i++;
