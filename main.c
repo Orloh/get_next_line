@@ -12,6 +12,7 @@
 
 #include "get_next_line.h"
 #include <stdio.h>
+#include <fcntl.h>
 
 int	main(int argc, char **argv)
 {
@@ -34,7 +35,7 @@ int	main(int argc, char **argv)
 		line = get_next_line(fd);
 		if (!line)
 			break ;
-		printf("get_next_line()-->%s", line);
+		printf("get_next_line()-->%s$", line);
 		free(line);
 		line = NULL;
 	}
