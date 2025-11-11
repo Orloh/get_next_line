@@ -6,3 +6,4 @@
 build/
 unity/
 test*.txt
+.test/
