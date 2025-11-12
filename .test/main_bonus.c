@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   main_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: orhernan <ohercelli@gmail.com>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/29 11:30:30 by orhernan          #+#    #+#             */
-/*   Updated: 2025/11/12 11:26:55 by orhernan         ###   ########.fr       */
+/*   Created: 2025/11/12 11:19:01 by orhernan          #+#    #+#             */
+/*   Updated: 2025/11/12 11:26:51 by orhernan         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,40 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-int	main(int argc, char **argv)
+int	main(void)
 {
-	int		fd;
-	char	*line;
+	int		fd1;
+	int		fd2;
+	char	*line1;
+	char	*line2;
 
-	if (argc != 2)
-	{
-		printf("Forgot to add a filename.\n");
-		return (1);
-	}
-	fd = open(argv[1], O_RDONLY);
-	if (fd == -1)
+	fd1 = open("file1.txt", O_RDONLY);
+	if (fd1 == -1)
 	{
 		printf("Could not open the file.\n");
 		return (1);
 	}
+	fd2 = open("file2.txt", O_RDONLY);
+	if (fd 2 == -1)
+	{
+		close(fd1);
+		printf("Coulld not open the file.\n);
+	 	return (1);
+	}
 	while (1)
 	{
-		line = get_next_line(fd);
-		if (!line)
+		line1 = get_next_line(fd1);
+		line2 = get_next_line(fd2);
+		if (!line1 && !line2)
 			break ;
-		printf("get_next_line()-->%s$", line);
-		free(line);
-		line = NULL;
+		printf("\nl1\t%s", line1);
+		printf("\nl2\t%s", line2);
+		free(line1);
+		free(line2);
+		line1 = NULL;
+		line2 = NULL;
 	}
-	close (fd);
+	close (fd1);
+	close (fd2);
 	return (0);
 }
